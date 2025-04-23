@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/upload",
+      "dest": "server.js",
+      "methods": ["POST"],
+      "headers": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS, DELETE",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Credentials": "true"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "server.js",
+      "methods": ["GET", "POST", "DELETE", "OPTIONS"],
+      "headers": {
+        "Access-Control-Allow-Origin": "https://avianca-co-fn142.vercel.app",
+        "Access-Control-Allow-Methods": "GET, POST,  OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Credentials": "true"
+      }
+    }
+  ]
+}
