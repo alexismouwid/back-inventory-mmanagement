@@ -13,12 +13,14 @@ router.post('/subir', upload.single('imagen'), async (req, res) => {
 
     const precioNum = parseFloat(precio);
     const cantidadNum = parseInt(cantidad);
+    const precioUnidad = precioNum / cantidadNum;
     const precioVentaNum = parseFloat(precioVenta);
 
     const nuevoProducto = new Producto({
       nombre,
       precio: precioNum,
       cantidad: cantidadNum,
+      precioUnidad,
       talla,
       color,
       precioTotal: precioNum * cantidadNum,
