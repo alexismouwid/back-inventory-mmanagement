@@ -9,7 +9,24 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+const whitelist = [
+  'http://localhost:5173', // desarrollo local
+  'https://inventory-management-taupe-one.vercel.app' // frontend en Vercel
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Permitir peticiones sin origen (por ejemplo desde curl o Postman)
+    if (!origin || whitelist.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Rutas
