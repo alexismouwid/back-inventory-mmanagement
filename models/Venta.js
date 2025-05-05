@@ -7,8 +7,12 @@ const VentaSchema = new mongoose.Schema({
   cantidadVendida: Number,
   nombreCliente: String,
   pagado: Boolean,
+  imagenUrl: String,
+  imagenVenta: {
+    data: Buffer,
+    contentType: String
+  },
   fechaVenta: { type: Date, default: Date.now },
-  imagenUrl: String
 });
 
 module.exports = mongoose.model('Venta', VentaSchema);
