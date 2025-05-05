@@ -21,5 +21,8 @@ mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Conectado a MongoDB'))
   .catch(err => console.error('Error al conectar MongoDB:', err));
 
-
+// 🔊 Esta línea es necesaria para que Render detecte el puerto
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
 
