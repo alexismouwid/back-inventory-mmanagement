@@ -1,14 +1,17 @@
 const express = require('express');
 const Venta = require('../models/Venta');
 const Producto = require('../models/Producto');
+const { isAuthenticated } = require('./auth');
 const router = express.Router();
 
 // Registrar venta
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticated, async (req, res) => {
   try {
     const { productoId, cantidadVendida, nombreCliente, pagado } = req.body;
 
     const producto = await Producto.findById(productoId);
+    const usuario = req.auth._id;
+
     if (!producto) return res.status(404).json({ mensaje: 'Producto no encontrado' });
 
     if (producto.cantidad < cantidadVendida) {
@@ -19,6 +22,7 @@ router.post('/', async (req, res) => {
     await producto.save();
 
     const nuevaVenta = new Venta({
+      usuario,
       productoId: producto._id,
       nombreProducto: producto.nombre,
       precioVenta: producto.precioVenta,
@@ -39,9 +43,10 @@ router.post('/', async (req, res) => {
 });
 
 // Obtener todas las ventas
-router.get('/', async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
   try {
-    const ventas = await Venta.find().sort({ fechaVenta: -1 });
+    const usuario = req.auth._id;
+    const ventas = await Venta.find( { usuario} ).sort({ fechaVenta: -1 });
     res.json(ventas);
   } catch (error) {
     res.status(500).json({ mensaje: 'Error al obtener ventas', error: error.message });
@@ -49,9 +54,10 @@ router.get('/', async (req, res) => {
 });
 
 // Obtener imagen de venta
-router.get('/:id/imagen', async (req, res) => {
+router.get('/:id/imagen', isAuthenticated, async (req, res) => {
   try {
-    const venta = await Venta.findById(req.params.id);
+    const usuario = req.auth._id;
+    const venta = await Venta.findById(req.params.id, usuario);
     if (!venta || !venta.imagenVenta?.data) return res.status(404).send('Imagen no encontrada');
     res.set('Content-Type', venta.imagenVenta.contentType);
     res.send(venta.imagenVenta.data);
@@ -61,9 +67,10 @@ router.get('/:id/imagen', async (req, res) => {
 });
 
 // Eliminar venta
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', isAuthenticated, async (req, res) => {
   try {
-    const venta = await Venta.findById(req.params.id);
+    const usuario = req.auth._id;
+    const venta = await Venta.findById(req.params.id, usuario);
     if (!venta) return res.status(404).json({ mensaje: 'Registro de venta no encontrado' });
 
     await venta.deleteOne();

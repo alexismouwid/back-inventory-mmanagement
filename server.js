@@ -1,10 +1,11 @@
-require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const productosRoutes = require('./routes/productos.routes');
 const ventasRoutes = require('./routes/ventas.routes');
+const authRoutes = require('./routes/auth.routes');
 
+require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -32,6 +33,7 @@ app.use(express.json());
 // Rutas
 app.use('/api/productos', productosRoutes);
 app.use('/api/ventas', ventasRoutes);
+app.use('/api/auth', authRoutes);
 
 // Conexión a MongoDB
 mongoose.connect(process.env.MONGODB_URI)
@@ -39,6 +41,14 @@ mongoose.connect(process.env.MONGODB_URI)
   .catch(err => console.error('Error al conectar MongoDB:', err));
 
 // 🔊 Esta línea es necesaria para que Render detecte el puerto
+ app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    console.error('🔐 Error de JWT:', err.message);
+    return res.status(401).json({ error: 'Token inválido o expirado' });
+  }
+  next(err);
+});
+
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
