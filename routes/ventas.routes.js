@@ -57,7 +57,7 @@ router.get('/', isAuthenticated, async (req, res) => {
 router.get('/:id/imagen', isAuthenticated, async (req, res) => {
   try {
     const usuario = req.auth._id;
-    const venta = await Venta.findByOne({ _id: req.params.id, usuario });
+    const venta = await Venta.findOne({ _id: req.params.id, usuario });
 
     if (!venta || !venta.imagenVenta?.data) {
     return res.status(404).send('Imagen no encontrada');
@@ -65,7 +65,13 @@ router.get('/:id/imagen', isAuthenticated, async (req, res) => {
 
     res.set('Content-Type', venta.imagenVenta.contentType);
 
+    /Logs para depuración 
+console.log('🧠 Sirviendo imagen para venta:', venta._id);
+console.log('👉 Content-Type:', venta.imagenVenta.contentType);
+console.log('👉 Buffer:', venta.imagenVenta.data.buffer.slice(0, 20));
+    
 
+    //✅Convertir el buffer a un objeto Buffer
     const buffer = Buffer.from(venta.imagenVenta.data.buffer);
 
     res.send(buffer);
