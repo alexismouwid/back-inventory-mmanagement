@@ -64,8 +64,13 @@ router.get('/:id/imagen', isAuthenticated, async (req, res) => {
     } 
 
     res.set('Content-Type', venta.imagenVenta.contentType);
-    res.send(venta.imagenVenta.data);
+
+
+    const buffer = Buffer.from(venta.imagenVenta.data.buffer);
+
+    res.send(buffer);
   } catch (error) {
+  console.error('❌ Error al obtener imagen de venta:', error);
     res.status(500).send('Error al obtener imagen de venta');
   }
 });
