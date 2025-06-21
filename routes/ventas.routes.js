@@ -65,7 +65,7 @@ router.get('/:id/imagen', isAuthenticated, async (req, res) => {
 
     res.set('Content-Type', venta.imagenVenta.contentType);
 
-    /Logs para depuración 
+    //Logs para depuración 
 console.log('🧠 Sirviendo imagen para venta:', venta._id);
 console.log('👉 Content-Type:', venta.imagenVenta.contentType);
 console.log('👉 Buffer:', venta.imagenVenta.data.buffer.slice(0, 20));
