@@ -57,8 +57,12 @@ router.get('/', isAuthenticated, async (req, res) => {
 router.get('/:id/imagen', isAuthenticated, async (req, res) => {
   try {
     const usuario = req.auth._id;
-    const venta = await Venta.findById(req.params.id, usuario);
-    if (!venta || !venta.imagenVenta?.data) return res.status(404).send('Imagen no encontrada');
+    const venta = await Venta.findByOne({ _id: req.params.id, usuario });
+
+    if (!venta || !venta.imagenVenta?.data) {
+    return res.status(404).send('Imagen no encontrada');
+    } 
+
     res.set('Content-Type', venta.imagenVenta.contentType);
     res.send(venta.imagenVenta.data);
   } catch (error) {
@@ -70,8 +74,12 @@ router.get('/:id/imagen', isAuthenticated, async (req, res) => {
 router.delete('/:id', isAuthenticated, async (req, res) => {
   try {
     const usuario = req.auth._id;
-    const venta = await Venta.findById(req.params.id, usuario);
-    if (!venta) return res.status(404).json({ mensaje: 'Registro de venta no encontrado' });
+    const venta = await Venta.findOne({ _id: req.params.id, usuario });
+
+    if (!venta) {
+         return res.status(404).json({ mensaje: 'Registro de venta no encontrado' });
+
+    }  
 
     await venta.deleteOne();
     res.json({ mensaje: 'Registro de venta eliminado correctamente' });
